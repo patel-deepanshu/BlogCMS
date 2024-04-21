@@ -27,12 +27,12 @@ const Header: React.FC<User> = ({ isAdmin }) => {
           >
             Home
           </Link>
-          {/* <Link
-            to="/blogs"
+          <Link
+            to="/admin"
             className="hover:bg-blue-600 px-3 py-2 rounded-md text-sm font-medium"
           >
-            Blogs
-          </Link> */}
+            Login
+          </Link>
           {isAdmin && (
             <Link
               to="/admin/add-blog"
