@@ -1,0 +1,15 @@
+FROM node:18-alpine AS build
+WORKDIR /app
+# install all deps (including dev) so the build step can run
+COPY package*.json ./
+RUN npm ci
+
+# copy source and build
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine AS runtime
+# copy built assets from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

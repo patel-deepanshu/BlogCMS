@@ -40,7 +40,7 @@ export const Login = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + sevenDays),
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    ...(process.env.NODE_ENV === "production" ? { sameSite: "none" } : {}),
   });
   res.status(StatusCodes.OK).json({ msg: "Login Successful" });
 };
