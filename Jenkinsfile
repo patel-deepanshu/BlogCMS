@@ -14,19 +14,40 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                // Install dependencies for both client and server
+                dir('client') {
+                    sh 'npm install'
+                }
+                dir('server') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Build') {
-            steps {
-                sh 'npm run build'
-            }
+    steps {
+        // Build client application
+        dir('client') {
+            sh 'npm run build'
         }
-
+        // Build server application 
+        dir('server') {
+            sh 'npm run build'
+        }
+    }
+}
         stage('Deploy') {
             steps {
-                sh 'pm2 restart blogcms || pm2 start npm --name "blogcms" -- run start'
+                dir('server') {
+                    // Stop any existing process and start server with PM2
+                    sh 'pm2 stop server || true'
+                    sh 'pm2 delete server || true' 
+                    sh 'pm2 start npm --name "server" -- start'
+                }
+                dir('client') {
+                    // Deploy client build files to web server directory
+                    sh 'sudo cp -r build/* /var/www/html/'
+                }
             }
         }
     }
